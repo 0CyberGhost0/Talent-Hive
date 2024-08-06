@@ -24,7 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -39,6 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
             ),
+            SizedBox(height: 20),
             TextField(
               controller: passwordController,
               decoration: InputDecoration(

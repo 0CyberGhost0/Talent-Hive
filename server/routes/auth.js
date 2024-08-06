@@ -3,6 +3,7 @@ const authRouter=express.Router();
 const User=require("../models/userModel");
 const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
+const authMiddleWare=require("../middlewares/authMiddleware");
 authRouter.post("/signup",async (req,res)=>{
     try{
         const {email,password}=req.body;
@@ -44,12 +45,35 @@ authRouter.post("/login",async (req,res)=>{
         if(!user){
             return res.status(400).json({error:"User not found with this email"});
         }
-        const token=jwt.sign({email},"jwtPassword");
-        res.status(200).json({msg:"Login Successfull",token:token});  
+        const token=jwt.sign({id:user._id},"jwtPassword");
+        res.status(200).json({...user._doc,token});  
     } catch (err) {
         res.status(500).json({error:err.message});
         
     }
 });
-
+authRouter.post("/tokenIsValid", async (req,res)=>{
+    try {
+        console.log("Inside TokenValid");
+        const token=req.header("x-auth-token");
+        if(!token) return res.json(false);
+        const verified=jwt.verify(token,"jwtPassword");
+        if(!verified) return res.json(false);
+        const user=await User.findById(verified.id);
+        if(!user) return res.json(false);
+        return res.json(true);
+    } catch (error) {
+        return res.status(500).json({error:error.message});
+    }
+});
+authRouter.get("/",authMiddleWare,async(req,res)=>{
+    try {
+        const userId=req.user;
+        const user=await User.findById(userId);
+        console.log(req.token);
+        res.status(200).json({...user._doc,token:req.token});
+    } catch (error) {
+        res.statusCode(500).json({error:error.message});
+    }
+})
 module.exports=authRouter;

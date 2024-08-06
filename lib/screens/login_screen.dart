@@ -20,7 +20,7 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -35,6 +35,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 20),
             TextField(
               controller: passwordController,
               decoration: InputDecoration(
