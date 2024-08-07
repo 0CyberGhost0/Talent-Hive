@@ -15,6 +15,7 @@ import 'package:talent_hive/screens/login_screen.dart';
 
 class AuthService {
   void signUpUser({
+    required String name,
     required String email,
     required String password,
     required BuildContext context,
@@ -67,7 +68,7 @@ class AuthService {
             sharedPreferences.setString(
                 'x-auth-token', jsonDecode(res.body)['token']);
             var token = sharedPreferences.getString('x-auth-token');
-            print(token);
+            print("Token: $token");
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => HomeScreen()));
 
@@ -85,7 +86,7 @@ class AuthService {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       String? token = sharedPreferences.getString("x-auth-token");
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         sharedPreferences.setString('x-auth-token', "");
       }
       print("before tokenValid");

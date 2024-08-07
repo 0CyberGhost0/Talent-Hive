@@ -1,65 +1,171 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:talent_hive/common/colors.dart';
+import 'package:talent_hive/screens/login_screen.dart';
 import 'package:talent_hive/services/authServices.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    TextEditingController nameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
 
-class _SignUpPageState extends State<SignUpPage> {
-  @override
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  void signUpUser() {
-    AuthService authService = AuthService();
-    authService.signUpUser(
-      email: emailController.text,
-      password: passwordController.text,
-      context: context,
+    void registerUser() {
+      AuthService authService = AuthService();
+      authService.signUpUser(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        context: context,
+      );
+    }
+
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              backgroundColor2,
+              backgroundColor2,
+              backgroundColor4,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: ListView(
+            children: [
+              SizedBox(
+                height: size.height * 0.03,
+              ),
+              Text(
+                "Welcome!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: textColor1,
+                  fontSize: 37,
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                "Create an Account to get started",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: textColor2,
+                  fontSize: 27,
+                  height: 1.2,
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.04,
+              ),
+              CustomTextField(
+                  "Enter Name", nameController, Icons.person_outline),
+              CustomTextField(
+                  "Enter Email", emailController, Icons.email_outlined),
+              CustomTextField(
+                  "Password", passwordController, Icons.password_outlined),
+              SizedBox(height: 10),
+              SizedBox(
+                height: size.height * 0.04,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 25,
+                ),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: registerUser,
+                      child: Container(
+                        width: size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          color: buttonColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.06,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()));
+                      },
+                      child: Text.rich(TextSpan(
+                        text: "Already a member?",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: textColor2,
+                        ),
+                        children: const [
+                          TextSpan(
+                            text: " Sign In",
+                            style: TextStyle(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      )),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Enter Email',
-                border: OutlineInputBorder(),
-                constraints: BoxConstraints(
-                  maxHeight: 300,
-                  maxWidth: 400,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Enter Password',
-                border: OutlineInputBorder(),
-                constraints: BoxConstraints(
-                  maxHeight: 300,
-                  maxWidth: 400,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passwordController.text);
-                signUpUser();
-              },
-              child: Text("SignUp"),
-            )
-          ],
+  Container CustomTextField(
+      String hintText, TextEditingController textController, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 25,
+        vertical: 10,
+      ),
+      child: TextField(
+        controller: textController,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
+          fillColor: Colors.white,
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          hintText: hintText,
+          hintStyle: const TextStyle(
+            color: Colors.black38,
+            fontSize: 19,
+          ),
+          prefixIcon: Icon(
+            icon,
+            color: Colors.black54,
+          ),
         ),
       ),
     );
