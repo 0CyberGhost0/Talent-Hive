@@ -41,10 +41,12 @@ authRouter.post("/login",async (req,res)=>{
         if(!password){
             return res.status(400).json({error:"Enter Password"});
         }
-        const user=await User.findOne({email:email});
+        const user=await User.findOne({email});
+        const samePassword=await bcrypt.compare(password,user.password);
         if(!user){
             return res.status(400).json({error:"User not found with this email"});
         }
+        if(!samePassword) return res.status(400).json({error:"Incorrect Password"});
         const token=jwt.sign({id:user._id},"jwtPassword");
         res.status(200).json({...user._doc,token});  
     } catch (err) {

@@ -62,8 +62,10 @@ class LoginScreen extends StatelessWidget {
               SizedBox(
                 height: size.height * 0.04,
               ),
-              CustomTextField("Enter Email", Icons.email_outlined),
-              CustomTextField("Password", Icons.password_outlined),
+              CustomTextField(
+                  "Enter Email", emailController, Icons.email_outlined),
+              CustomTextField(
+                  "Password", passwordController, Icons.password_outlined),
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
@@ -92,13 +94,18 @@ class LoginScreen extends StatelessWidget {
                         color: buttonColor,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Center(
-                        child: Text(
-                          "Sign In",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal,
+                      child: GestureDetector(
+                        onTap: () {
+                          logInUser();
+                        },
+                        child: Center(
+                          child: Text(
+                            "Sign In",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ),
                       ),
@@ -140,13 +147,15 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Container CustomTextField(String hintText, IconData icon) {
+  Container CustomTextField(
+      String hintText, TextEditingController textController, IconData icon) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 25,
         vertical: 10,
       ),
       child: TextField(
+        controller: textController,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(
             horizontal: 20,

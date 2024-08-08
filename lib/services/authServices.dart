@@ -22,7 +22,8 @@ class AuthService {
   }) async {
     try {
       print("Inside SignUp");
-      var user = User(id: '', email: email, password: password, token: '');
+      var user =
+          User(name: "", id: '', email: email, password: password, token: '');
       http.Response res = await http.post(
         Uri.parse('$uri/signup'),
         body: user.toJson(),
@@ -106,13 +107,15 @@ class AuthService {
               'Content-Type': 'application/json; charset=UTF-8',
               "x-auth-token": token
             });
-        print(userData.body);
+        print("UserData: ${userData.body.toString()}");
         var userProvider = Provider.of<UserProvider>(context, listen: false);
         print("before setuser");
-        userProvider.setUser(userData.body);
-        // print("after setuser");
-
-        print("Email: $userProvider.user.email");
+        if (userData != null && userData.body != null) {
+          print("setUser Called");
+          userProvider.setUser(userData.body);
+          print("after setUser called");
+        }
+        print("Email: ${userProvider.user.email}");
       }
     } catch (err) {
       print("Error Lol: $err");

@@ -16,6 +16,9 @@ class SignUpPage extends StatelessWidget {
 
     void registerUser() {
       AuthService authService = AuthService();
+      print(nameController.text);
+      print(emailController.text);
+      print(passwordController.text);
       authService.signUpUser(
         name: nameController.text,
         email: emailController.text,
