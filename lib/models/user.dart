@@ -6,7 +6,9 @@ class User {
   final String email;
   final String password;
   final String token;
+  final List<String> skills;
   User({
+    required this.skills,
     required this.name,
     required this.id,
     required this.email,
@@ -21,6 +23,7 @@ class User {
       'email': email,
       'password': password,
       'token': token,
+      'skills': skills,
     };
   }
 
@@ -31,6 +34,7 @@ class User {
       email: map['email'] ?? '',
       password: map['password'] ?? '',
       token: map['token'] ?? '',
+      skills: map['skills'] ?? [],
     );
   }
 

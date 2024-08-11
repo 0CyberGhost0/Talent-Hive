@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:talent_hive/common/colors.dart'; // Ensure this path is correct
+import 'package:talent_hive/models/jobModel.dart';
 
 class JobCard extends StatelessWidget {
-  const JobCard({Key? key}) : super(key: key);
+  final Job job; // Add a Job parameter
+
+  const JobCard({Key? key, required this.job}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Example list of skills
-    List<String> skills = [
-      "Backend",
-      "Full-time",
-      "Remote",
-      "Design",
-      "Figma",
-      "UI/UX"
-    ];
-
     return Container(
       width: 300,
       height: 220, // Set the fixed height for the JobCard
@@ -39,29 +32,36 @@ class JobCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: AssetImage('assets/images/company_logo.png'),
+                backgroundImage:
+                    NetworkImage(job.imageUrl), // Use job's imageUrl
                 radius: 25,
               ),
               SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Senior UI Designer",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      job.title, // Use job's title
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Handle overflow
+                      maxLines: 1, // Restrict title to one line
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    "Google Inc.",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    SizedBox(height: 5),
+                    Text(
+                      job.org, // Use job's organization name
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Handle overflow
+                      maxLines: 1, // Restrict organization to one line
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -71,7 +71,8 @@ class JobCard extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                for (var skill in skills) _buildSkillChip(skill),
+                for (var skill in job.skill)
+                  _buildSkillChip(skill), // Use job's skills
               ],
             ),
           ),
@@ -84,7 +85,8 @@ class JobCard extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "\$80,000 - \$100,000",
+                      text:
+                          "\$${job.minSalary} - \$${job.maxSalary}", // Use job's salary range
                       style: GoogleFonts.poppins(
                         fontSize: 20, // Main salary text size
                         fontWeight: FontWeight.bold,

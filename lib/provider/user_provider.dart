@@ -9,6 +9,7 @@ class UserProvider extends ChangeNotifier {
     email: '',
     password: '',
     token: '',
+    skills: [],
   );
   User get user => _user;
   void setFromModel(User user) {

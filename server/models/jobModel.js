@@ -26,7 +26,7 @@ const jobSchema=mongoose.Schema({
     },
     type:{
         type:String,
-        enum:['Remote','fullTime','partTime','Contract'],
+        enum:['Remote','Full Time','Part Time','Contract'],
         required:true,
     },
     skill:{

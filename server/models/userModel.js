@@ -19,7 +19,12 @@ const userSchema=mongoose.Schema({
             },
             message: 'Password length should be greater than 6 characters',
           },
-    }
+    },
+    skill:{
+        type:[String],
+        default:[],
+    },
+    
 });
 const User=mongoose.model("User",userSchema);
 module.exports=User;

@@ -12,6 +12,10 @@ import 'package:talent_hive/models/user.dart';
 import 'package:talent_hive/provider/user_provider.dart';
 import 'package:talent_hive/screens/homeScreen.dart';
 import 'package:talent_hive/screens/login_screen.dart';
+import 'package:talent_hive/screens/otpScreen.dart';
+import 'package:talent_hive/screens/skillSelectionScreen.dart';
+import 'package:talent_hive/screens/splash_screen.dart';
+import 'package:talent_hive/services/otpServices.dart';
 
 class AuthService {
   void signUpUser({
@@ -22,8 +26,13 @@ class AuthService {
   }) async {
     try {
       print("Inside SignUp");
-      var user =
-          User(name: "", id: '', email: email, password: password, token: '');
+      var user = User(
+          name: '',
+          id: '',
+          email: email,
+          password: password,
+          token: '',
+          skills: []);
       http.Response res = await http.post(
         Uri.parse('$uri/signup'),
         body: user.toJson(),
@@ -31,15 +40,22 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print(res.statusCode);
+      print("RESPONSE: ${res.body}");
       httpErrorHandler(
           res: res,
           context: context,
           onSuccess: () {
+            OTPService otpService = OTPService();
+            print("USER ID: ${jsonDecode(res.body)['_id']}");
+            otpService.getOTP(email);
             showSnackBar(
                 context: context, text: "Account Created Successfully!");
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      OTPScreen(email: jsonDecode(res.body)['email']),
+                ));
           });
     } catch (e) {
       print(e);
@@ -70,8 +86,8 @@ class AuthService {
                 'x-auth-token', jsonDecode(res.body)['token']);
             var token = sharedPreferences.getString('x-auth-token');
             print("Token: $token");
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SkillsSelectionPage()));
 
             showSnackBar(context: context, text: "Login Successfull");
           });

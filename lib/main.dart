@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:talent_hive/provider/user_provider.dart';
+import 'package:talent_hive/screens/jobDetailScreen.dart';
+import 'package:talent_hive/screens/skillSelectionScreen.dart';
 import 'package:talent_hive/screens/homeScreen.dart';
 import 'package:talent_hive/screens/login_screen.dart';
+import 'package:talent_hive/screens/otpScreen.dart';
 import 'package:talent_hive/screens/signup_page.dart';
 import 'package:talent_hive/screens/splash_screen.dart';
 import 'package:talent_hive/services/authServices.dart';
@@ -42,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       // home: Provider.of<UserProvider>(context).user.token.isEmpty
       //     ? SignUpPage()
       //     : LoginScreen(),
-      home: HomeScreen(),
+      home: JobDetailScreen(),
     );
   }
 }

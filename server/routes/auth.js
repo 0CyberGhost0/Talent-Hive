@@ -3,6 +3,8 @@ const authRouter=express.Router();
 const User=require("../models/userModel");
 const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
+const mailer=require("../mailer/mailer");
+
 const authMiddleWare=require("../middlewares/authMiddleware");
 authRouter.post("/signup",async (req,res)=>{
     try{
@@ -25,7 +27,8 @@ authRouter.post("/signup",async (req,res)=>{
             password:hashedPassword,
         });
         await user.save();
-        res.status(200).json({msg:"Account Created Successfully"});
+
+        res.status(200).json({msg:"Account Created Successfully",...user._doc});
 
 
     }catch(err){
