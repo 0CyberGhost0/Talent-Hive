@@ -17,7 +17,9 @@ class JobServices {
     required List<String> skills,
     required int minSalary,
     required int maxSalary,
+    required int applyCount,
     required BuildContext context,
+    required String location,
   }) async {
     try {
       var job = Job(
@@ -29,6 +31,8 @@ class JobServices {
         maxSalary: maxSalary,
         type: jobType,
         skill: skills,
+        applyCount: applyCount,
+        location: location,
       );
       http.Response res = await http.post(
         Uri.parse("$uri/job/postJob"),
@@ -109,5 +113,79 @@ class JobServices {
       print("FEATURED JOB ERROR: $err");
     }
     return featuredJob;
+  }
+
+  Future<List<Job>> getRecentJob() async {
+    List<Job> recentJob = [];
+    try {
+      http.Response res = await http.get(
+        Uri.parse("$uri/job/recentJob"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (res.statusCode == 200) {
+        List<dynamic> jobsJson = jsonDecode(res.body);
+        recentJob = jobsJson.map((json) => Job.fromJson(json)).toList();
+      }
+
+      print("RECENT JOB ${res.body}");
+    } catch (err) {
+      print("RECENT JOB ERROR: $err");
+    }
+    return recentJob;
+  }
+
+  Future<List<Job>> searchJob(String query) async {
+    List<Job> searchResult = [];
+    try {
+      http.Response res = await http.get(
+        Uri.parse("$uri/job/searchJob/$query"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (res.statusCode == 200) {
+        List<dynamic> jobsJson = jsonDecode(res.body);
+        searchResult = jobsJson.map((json) => Job.fromJson(json)).toList();
+      }
+
+      print("Search  ${res.body}");
+    } catch (err) {
+      print("SEarch JOB ERROR: $err");
+    }
+    return searchResult;
+  }
+
+  Future<Job> getJobDetail(String jobId) async {
+    Job job = Job(
+      location: '',
+      jobId: '',
+      title: '',
+      org: '',
+      description: '',
+      imageUrl: '',
+      minSalary: 0,
+      maxSalary: 0,
+      type: '',
+      skill: [],
+      applyCount: 0,
+    );
+
+    try {
+      http.Response res = await http.get(
+        Uri.parse("$uri/job/search/${jobId}"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      print("GET DETAIL BODY: ${res.body}");
+      if (res.statusCode == 200) job = Job.fromJson(jsonDecode(res.body));
+    } catch (err) {
+      print(" JOB DETAIL ERROR: $err");
+    }
+    return job;
   }
 }

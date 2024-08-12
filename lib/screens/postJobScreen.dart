@@ -15,6 +15,8 @@ class _PostJobPageState extends State<PostJobPage> {
   final TextEditingController orgController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController skillsController = TextEditingController();
+  final TextEditingController locationController =
+      TextEditingController(); // New Location Controller
 
   String? selectedJobType; // Initially null to show "Job Type"
   List<String> skills = []; // List to store multiple skills
@@ -23,23 +25,19 @@ class _PostJobPageState extends State<PostJobPage> {
       const RangeValues(30000, 120000); // Default salary range
 
   void postJob() {
-    print(titleController.text);
-    print(orgController.text);
-    print(selectedJobType ?? 'Not selected');
-    print(
-        'Salary Range: ${_salaryRange.start.toInt()} - ${_salaryRange.end.toInt()}');
-    print(descriptionController.text);
-    print(skills); // Printing list of skills
     JobServices jobServices = JobServices();
     jobServices.postJob(
-        context: context,
-        title: titleController.text,
-        organization: orgController.text,
-        jobType: selectedJobType!,
-        description: descriptionController.text,
-        skills: skills,
-        minSalary: _salaryRange.start.toInt(),
-        maxSalary: _salaryRange.end.toInt());
+      context: context,
+      title: titleController.text,
+      organization: orgController.text,
+      jobType: selectedJobType!,
+      description: descriptionController.text,
+      skills: skills,
+      minSalary: _salaryRange.start.toInt(),
+      maxSalary: _salaryRange.end.toInt(),
+      applyCount: 0,
+      location: locationController.text, // Add location here
+    );
   }
 
   void addSkill() {
@@ -105,6 +103,8 @@ class _PostJobPageState extends State<PostJobPage> {
               CustomTextField("Job Title", titleController, Icons.title),
               CustomTextField(
                   "Organization Name", orgController, Icons.business_outlined),
+              CustomTextField("Location", locationController,
+                  Icons.location_on_outlined), // Location Field
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                 child: Container(

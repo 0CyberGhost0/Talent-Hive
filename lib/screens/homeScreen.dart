@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:talent_hive/provider/user_provider.dart';
 import 'package:talent_hive/screens/postJobScreen.dart';
+import 'package:talent_hive/screens/searchScreen.dart';
 import 'package:talent_hive/services/authServices.dart';
 import 'package:talent_hive/services/jobServices.dart';
 import '../models/jobModel.dart';
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AuthService authService = AuthService();
     authService.getUserData(context: context);
     getFeaturedData();
-    // getRecentData();
+    getRecentData();
   }
 
   void getFeaturedData() async {
@@ -38,17 +39,17 @@ class _HomeScreenState extends State<HomeScreen> {
       featuredJobs = jobs;
     });
   }
-  //
-  // void getRecentData() async {
-  //   final user = Provider.of<UserProvider>(context, listen: false).user;
-  //   JobServices jobServices = JobServices();
-  //
-  //   // Fetch recent jobs based on userId or any other criteria
-  //   List<Job> jobs = await jobServices.get(user.id); // Assume this method exists
-  //   setState(() {
-  //     recentJobs = jobs;
-  //   });
-  // }
+
+  void getRecentData() async {
+    JobServices jobServices = JobServices();
+
+    // Fetch recent jobs based on userId or any other criteria
+    List<Job> jobs =
+        await jobServices.getRecentJob(); // Assume this method exists
+    setState(() {
+      recentJobs = jobs;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,33 +94,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "Search for jobs",
-                            fillColor: Colors.white,
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
+                  // GestureDetector for Search Bar
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchScreen(),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            enabled: false, // Make the TextField non-editable
+                            decoration: InputDecoration(
+                              hintText: "Search for jobs",
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 16),
                             ),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 16),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.green[800],
-                          shape: BoxShape.circle,
+                        SizedBox(width: 16),
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.green[800],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.search, color: Colors.white),
                         ),
-                        child: Icon(Icons.search, color: Colors.white),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20),
                   // Categories Section
@@ -179,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     shrinkWrap: true,
                     itemCount: recentJobs.length,
                     itemBuilder: (context, index) {
-                      // return RecentJobCard(job: recentJobs[index]); // Pass job data
+                      return RecentJobCard(
+                          job: recentJobs[index]); // Pass job data
                     },
                   ),
                 ],

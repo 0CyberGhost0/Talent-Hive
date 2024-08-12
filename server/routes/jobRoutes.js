@@ -3,39 +3,44 @@ const express=require("express");
 const Job=require("../models/jobModel");
 const User = require("../models/userModel");
 const jobRoute=express.Router();
-jobRoute.get("/search",async(req,res)=>{
+jobRoute.get("/searchJob/:searchText", async (req, res) => {
     try {
-        console.log("inside search");
-        const searchText=req.query.text;
-        console.log(searchText);
-        if(!searchText || searchText.length==0){
-            return res.status(400).json({error:"Enter text to search"});
-        }
-        const jobs=await Job.find({
-            title:{
-                $regex:searchText,
-                $options:"i"
-            }
-        });
-        res.status(200).json(jobs);
+      console.log("inside search");
+      const searchText = req.params.searchText;
+      console.log(searchText);
+  
+      if (!searchText || searchText.length == 0) {
+        return res.status(400).json({ error: "Enter text to search" });
+      }
+  
+      const jobs = await Job.find({
+        $or: [
+          { title: { $regex: searchText, $options: "i" } },   // Search in title
+          { skill: { $regex: searchText, $options: "i" } },  // Search in skill array
+          { org: { $regex: searchText, $options: "i" } },   // Search in org field
+        ],
+      });
+  
+      res.status(200).json(jobs);
     } catch (err) {
-        res.status(500).json({error:err});
-        
+      res.status(500).json({ error: err });
     }
-});
+  });
+  
+  
 jobRoute.post("/postJob",async(req,res)=>{
     try{
         console.log("inside postjob");
-        const {title,org,type,minSalary,maxSalary,description,skill,imageUrl}=req.body;
+        const {title,org,type,minSalary,maxSalary,description,skill,imageUrl,location}=req.body;
         var job=new Job({
-            title,org,type,minSalary,maxSalary,description,skill,imageUrl
+            title,org,type,minSalary,maxSalary,description,skill,imageUrl,location,
 
         });
         console.log(job);
         await job.save();
         return res.status(200).json(job);
     }catch(err){
-        res.status(500).json({error:err});
+        res.status(500).json({"ERROR SD":err});
     }
 });
 jobRoute.get("/category/:type",async(req,res)=>{
@@ -94,9 +99,19 @@ jobRoute.post("/featuredJob", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+jobRoute.get("/recentJob", async (req, res) => {
+    try {
+        console.log("INSIDE RECENT JOB");
+      const jobs = await Job.find().sort({ createdAt: -1 }); // Sort jobs by creation time in descending order
+      res.status(200).json(jobs);
+    } catch (error) {
+      res.status(400).json({ "error": error.message });
+    }
+  });
+  
 
 
-module.exports = jobRoute;
+
 
 jobRoute.post("/setSkill",async(req,res)=>{
     try {
@@ -115,5 +130,18 @@ jobRoute.post("/setSkill",async(req,res)=>{
         res.status(500).json({error:err});
     }
 });
+jobRoute.get("/search/:userId",async(req,res)=>{
+    try{
+        console.log("Inside search job");
+        const jobId=req.params.userId
+        console.log(jobId);
+        const job=await Job.findById(jobId);
+        if(!job) return res.status(400).json({"error":"Job Not Found"});
+        res.json(job);
+
+    }catch(err){
+        res.status(500).json({error:err});
+    }
+})
 
 module.exports=jobRoute;

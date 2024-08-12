@@ -1,29 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:talent_hive/provider/user_provider.dart';
+import 'package:talent_hive/services/jobServices.dart';
 
 import '../models/jobModel.dart';
 
-class JobDetailScreen extends StatelessWidget {
+class JobDetailScreen extends StatefulWidget {
+  String jobId;
+  JobDetailScreen({super.key, required this.jobId});
+  @override
+  State<JobDetailScreen> createState() => _JobDetailScreenState();
+}
+
+class _JobDetailScreenState extends State<JobDetailScreen> {
+  @override
+  void initState() {
+    getJobData();
+    super.initState();
+  }
+
+  Job job = Job(
+      location: '',
+      jobId: '',
+      title: '',
+      org: '',
+      description: '',
+      imageUrl: '',
+      minSalary: 0,
+      maxSalary: 0,
+      type: '',
+      skill: [],
+      applyCount: 0);
+
+  Future<void> getJobData() async {
+    JobServices jobService = JobServices();
+    print("JOB ID : ${widget.jobId}");
+    Job fetchedJob = await jobService.getJobDetail(widget.jobId);
+    setState(() {
+      job = fetchedJob;
+    });
+    print("INSIDE SCREEN: ${job}");
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sample job data
-    final job = Job(
-      title: 'Junior Front End Developer',
-      org: 'Apple Computer, Inc.',
-      description:
-          'We’re looking for a junior front-end developer who works on building ith the application’s r who works on building the user . They showcase their skills with the application’s visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works  visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works on building the user interface of a mobile application or website. They showcase their skills with the ',
-      imageUrl:
-          'https://img.freepik.com/premium-vector/logo-google_798572-207.jpg',
-      minSalary: 50,
-      maxSalary: 100,
-      type: 'Full Time',
-      skill: [
-        "Remote",
-        "Fulltime",
-        "Senior",
-        "Front End",
-      ],
-    );
+    // final job = Job(
+    //   title: 'Junior Front End Developer',
+    //   org: 'Apple Computer, Inc.',
+    //   description:
+    //       'We’re looking for a junior front-end developer who works on building ith the application’s r who works on building the user . They showcase their skills with the application’s visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works  visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works on building the user interface of a mobile application or website. They showcase their skills with the ',
+    //   imageUrl:
+    //       'https://img.freepik.com/premium-vector/logo-google_798572-207.jpg',
+    //   minSalary: 50,
+    //   maxSalary: 100,
+    //   type: 'Full Time',
+    //   skill: [
+    //     "Remote",
+    //     "Fulltime",
+    //     "Senior",
+    //     "Front End",
+    //   ],
+    //   applyCount: 1478,
+    // );
 
     return Scaffold(
       backgroundColor: Color(0xff305a53), // Background color matching the image
@@ -205,7 +245,7 @@ class JobDetailScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "1,468",
+                              job.applyCount.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,

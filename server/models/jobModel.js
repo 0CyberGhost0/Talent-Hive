@@ -33,7 +33,19 @@ const jobSchema=mongoose.Schema({
         type:[String],
         required: true,
     },
+    applyCount:{
+        type:Number,
+        default:0,
+    },
+    applicants:{
+        type:[String],
+        default:[],
+    },
+    location:{
+        type:String,
+        required:true,
+    },
     
-});
+},{timestamps:true});
 const Jobs=mongoose.model("Job",jobSchema);
 module.exports=Jobs;

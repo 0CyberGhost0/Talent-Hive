@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const Job = require("./models/jobModel"); // Adjust the path to your Job model if necessary
 
+// Helper function to generate a random number of applicants
+const getRandomApplicants = () => {
+  return Math.floor(Math.random() * 900) + 1001; // Generates a number between 1001 and 1900
+};
+
 const jobs = [
   {
     title: "Senior Flutter Developer",
@@ -10,7 +15,10 @@ const jobs = [
     minSalary: 80000,
     maxSalary: 120000,
     type: "Full Time",
-    skill: ["Flutter", "Dart", "Git", "Firebase"]
+    skill: ["Flutter", "Dart", "Git", "Firebase"],
+    location: "San Francisco, CA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Backend Engineer",
@@ -20,7 +28,10 @@ const jobs = [
     minSalary: 90000,
     maxSalary: 140000,
     type: "Remote",
-    skill: ["Node.js", "Python", "Docker", "MongoDB"]
+    skill: ["Node.js", "Python", "Docker", "MongoDB"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Data Scientist",
@@ -30,7 +41,10 @@ const jobs = [
     minSalary: 95000,
     maxSalary: 150000,
     type: "Full Time",
-    skill: ["Python", "Machine Learning", "Pandas", "TensorFlow"]
+    skill: ["Python", "Machine Learning", "Pandas", "TensorFlow"],
+    location: "New York, NY",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Frontend Developer",
@@ -40,7 +54,10 @@ const jobs = [
     minSalary: 70000,
     maxSalary: 100000,
     type: "Part Time",
-    skill: ["JavaScript", "React", "HTML/CSS", "Tailwind CSS"]
+    skill: ["JavaScript", "React", "HTML/CSS", "Tailwind CSS"],
+    location: "Austin, TX",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "DevOps Engineer",
@@ -50,7 +67,10 @@ const jobs = [
     minSalary: 110000,
     maxSalary: 160000,
     type: "Full Time",
-    skill: ["AWS", "Docker", "Kubernetes", "Terraform"]
+    skill: ["AWS", "Docker", "Kubernetes", "Terraform"],
+    location: "Seattle, WA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "UI/UX Designer",
@@ -60,7 +80,10 @@ const jobs = [
     minSalary: 60000,
     maxSalary: 90000,
     type: "Contract",
-    skill: ["Figma", "Adobe XD", "UI/UX Design", "Material UI"]
+    skill: ["Figma", "Adobe XD", "UI/UX Design", "Material UI"],
+    location: "Los Angeles, CA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Project Manager",
@@ -70,7 +93,10 @@ const jobs = [
     minSalary: 90000,
     maxSalary: 130000,
     type: "Remote",
-    skill: ["Agile", "Scrum", "JIRA", "DevOps"]
+    skill: ["Agile", "Scrum", "JIRA", "DevOps"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "iOS Developer",
@@ -80,7 +106,10 @@ const jobs = [
     minSalary: 85000,
     maxSalary: 125000,
     type: "Full Time",
-    skill: ["Swift", "iOS", "Git", "Firebase"]
+    skill: ["Swift", "iOS", "Git", "Firebase"],
+    location: "San Jose, CA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Cybersecurity Analyst",
@@ -90,7 +119,10 @@ const jobs = [
     minSalary: 100000,
     maxSalary: 145000,
     type: "Full Time",
-    skill: ["Python", "Cybersecurity", "Linux", "Networking"]
+    skill: ["Python", "Cybersecurity", "Linux", "Networking"],
+    location: "Washington, DC",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Machine Learning Engineer",
@@ -100,7 +132,10 @@ const jobs = [
     minSalary: 110000,
     maxSalary: 160000,
     type: "Remote",
-    skill: ["Python", "TensorFlow", "Pandas", "Data Analysis"]
+    skill: ["Python", "TensorFlow", "Pandas", "Data Analysis"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Full Stack Developer",
@@ -110,7 +145,10 @@ const jobs = [
     minSalary: 95000,
     maxSalary: 140000,
     type: "Full Time",
-    skill: ["JavaScript", "Node.js", "React", "MongoDB"]
+    skill: ["JavaScript", "Node.js", "React", "MongoDB"],
+    location: "Boston, MA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Quality Assurance Engineer",
@@ -120,7 +158,10 @@ const jobs = [
     minSalary: 75000,
     maxSalary: 110000,
     type: "Contract",
-    skill: ["JavaScript", "SQL", "Git", "Linux"]
+    skill: ["JavaScript", "SQL", "Git", "Linux"],
+    location: "Chicago, IL",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Blockchain Developer",
@@ -130,7 +171,10 @@ const jobs = [
     minSalary: 120000,
     maxSalary: 170000,
     type: "Remote",
-    skill: ["JavaScript", "Python", "AWS", "Docker"]
+    skill: ["JavaScript", "Python", "AWS", "Docker"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Systems Administrator",
@@ -140,7 +184,10 @@ const jobs = [
     minSalary: 80000,
     maxSalary: 110000,
     type: "Full Time",
-    skill: ["Linux", "SQL Server", "Git", "Docker"]
+    skill: ["Linux", "SQL Server", "Git", "Docker"],
+    location: "Dallas, TX",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Game Developer",
@@ -150,7 +197,10 @@ const jobs = [
     minSalary: 85000,
     maxSalary: 130000,
     type: "Full Time",
-    skill: ["C++", "Unity", "Git", "SQL"]
+    skill: ["C++", "Unity", "Git", "SQL"],
+    location: "Los Angeles, CA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Mobile Developer",
@@ -160,7 +210,10 @@ const jobs = [
     minSalary: 90000,
     maxSalary: 130000,
     type: "Remote",
-    skill: ["Flutter", "Dart", "Kotlin", "Swift"]
+    skill: ["Flutter", "Dart", "Kotlin", "Swift"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Database Administrator",
@@ -170,7 +223,10 @@ const jobs = [
     minSalary: 85000,
     maxSalary: 120000,
     type: "Full Time",
-    skill: ["SQL Server", "PostgreSQL", "MongoDB", "Oracle"]
+    skill: ["SQL Server", "PostgreSQL", "MongoDB", "Oracle"],
+    location: "Miami, FL",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "DevOps Architect",
@@ -180,7 +236,10 @@ const jobs = [
     minSalary: 120000,
     maxSalary: 170000,
     type: "Full Time",
-    skill: ["AWS", "Docker", "Kubernetes", "Terraform"]
+    skill: ["AWS", "Docker", "Kubernetes", "Terraform"],
+    location: "Seattle, WA",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Front-End Developer",
@@ -190,7 +249,10 @@ const jobs = [
     minSalary: 70000,
     maxSalary: 100000,
     type: "Part Time",
-    skill: ["JavaScript", "React", "HTML/CSS", "Material UI"]
+    skill: ["JavaScript", "React", "HTML/CSS", "Material UI"],
+    location: "Phoenix, AZ",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   },
   {
     title: "Cloud Engineer",
@@ -200,7 +262,10 @@ const jobs = [
     minSalary: 100000,
     maxSalary: 140000,
     type: "Remote",
-    skill: ["AWS", "Docker", "Terraform", "Linux"]
+    skill: ["AWS", "Docker", "Terraform", "Linux"],
+    location: "Remote",
+    applicants: [], // Initially empty
+    applyCount: getRandomApplicants()
   }
 ];
 
