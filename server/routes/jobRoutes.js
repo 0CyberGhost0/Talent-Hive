@@ -142,6 +142,57 @@ jobRoute.get("/search/:userId",async(req,res)=>{
     }catch(err){
         res.status(500).json({error:err});
     }
-})
+});
+
+
+jobRoute.post('/hasApplied', async (req, res) => {
+    try {
+        const { userId, jobId } = req.body;
+        if (!userId || !jobId) {
+            return res.status(400).json({ error: 'userId and jobId are required' });
+        }
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(400).json({ error: 'Job not found' });
+        }
+        const hasApplied = job.applicants.includes(userId);
+
+        res.status(200).json(hasApplied );
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+jobRoute.post("/apply",async(req,res)=>{
+    try {
+        const { userId, jobId } = req.body;
+
+        if (!userId || !jobId) {
+            return res.status(400).json({ error: 'userId and jobId are required' });
+        }
+
+        // Find the job by jobId
+        const job = await Job.findById(jobId);
+
+        if (!job) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+
+        // Check if the user has already applied
+        if (job.applicants.includes(userId)) {
+            return res.status(400).json({ error: 'User has already applied' });
+        }
+
+        // Add userId to the applicants array
+        job.applicants.push(userId);
+        const applyCount=job.applyCount;
+        job.applyCount=applyCount+1;
+        // Save the updated job document
+        await job.save();
+
+        res.status(200).json({ message: 'Application successful' });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
 
 module.exports=jobRoute;

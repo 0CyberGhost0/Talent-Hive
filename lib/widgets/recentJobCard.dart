@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:talent_hive/common/colors.dart'; // Ensure this path is correct
@@ -11,6 +12,9 @@ class RecentJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Generate a random number between 1 and 8
+    final int randomNum = Random().nextInt(17) + 1;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -40,7 +44,8 @@ class RecentJobCard extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(job.imageUrl),
+                  backgroundImage:
+                      AssetImage('assets/images/logo$randomNum.jpg'),
                   radius: 25,
                 ),
                 SizedBox(width: 10),
@@ -97,9 +102,7 @@ class RecentJobCard extends StatelessWidget {
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    SizedBox(height: 5),
                     Text(
                       "\$${job.minSalary} - \$${job.maxSalary}",
                       style: GoogleFonts.poppins(

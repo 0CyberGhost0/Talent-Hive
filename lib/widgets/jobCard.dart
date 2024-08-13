@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:talent_hive/common/colors.dart'; // Ensure this path is correct
@@ -5,12 +6,15 @@ import 'package:talent_hive/models/jobModel.dart';
 import 'package:talent_hive/screens/jobDetailScreen.dart';
 
 class JobCard extends StatelessWidget {
-  final Job job; // Add a Job parameter
+  final Job job;
 
   const JobCard({Key? key, required this.job}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Generate a random number between 1 and 8
+    final int randomNum = Random().nextInt(17) + 1;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -20,9 +24,9 @@ class JobCard extends StatelessWidget {
       },
       child: Container(
         width: 300,
-        height: 220, // Set the fixed height for the JobCard
-        margin: EdgeInsets.only(right: 16),
-        padding: EdgeInsets.all(16),
+        height: 220,
+        margin: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -41,7 +45,7 @@ class JobCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundImage:
-                      NetworkImage(job.imageUrl), // Use job's imageUrl
+                      AssetImage('assets/images/logo$randomNum.jpg'),
                   radius: 25,
                 ),
                 SizedBox(width: 10),
@@ -50,23 +54,23 @@ class JobCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        job.title, // Use job's title
+                        job.title,
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
-                        overflow: TextOverflow.ellipsis, // Handle overflow
-                        maxLines: 1, // Restrict title to one line
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       SizedBox(height: 5),
                       Text(
-                        job.org, // Use job's organization name
+                        job.org,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
-                        overflow: TextOverflow.ellipsis, // Handle overflow
-                        maxLines: 1, // Restrict organization to one line
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ],
                   ),
@@ -74,18 +78,15 @@ class JobCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            // Skills Section with Horizontal Scroll
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  for (var skill in job.skill)
-                    _buildSkillChip(skill), // Use job's skills
+                  for (var skill in job.skill) _buildSkillChip(skill),
                 ],
               ),
             ),
             Spacer(),
-            // Salary and Arrow Icon in Separate Rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -93,13 +94,11 @@ class JobCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text:
-                            "\$${job.minSalary} - \$${job.maxSalary}", // Use job's salary range
+                        text: "\$${job.minSalary} - \$${job.maxSalary}",
                         style: GoogleFonts.poppins(
-                          fontSize: 20, // Main salary text size
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color:
-                              homeGreenColor, // Use the homeGreenColor defined in colors.dart
+                          color: homeGreenColor,
                         ),
                       ),
                     ],
@@ -122,11 +121,10 @@ class JobCard extends StatelessWidget {
     );
   }
 
-  // Skill Chip Widget
   Widget _buildSkillChip(String label) {
     return Container(
-      margin: EdgeInsets.only(right: 8),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.green[100],
         borderRadius: BorderRadius.circular(20),

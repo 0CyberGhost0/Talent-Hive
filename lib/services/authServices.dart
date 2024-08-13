@@ -1,21 +1,16 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:talent_hive/common/constants.dart';
 import 'package:talent_hive/common/httpErrorHandler.dart';
 import 'package:talent_hive/models/user.dart';
 import 'package:talent_hive/provider/user_provider.dart';
-import 'package:talent_hive/screens/homeScreen.dart';
-import 'package:talent_hive/screens/login_screen.dart';
 import 'package:talent_hive/screens/otpScreen.dart';
 import 'package:talent_hive/screens/skillSelectionScreen.dart';
-import 'package:talent_hive/screens/splash_screen.dart';
 import 'package:talent_hive/services/otpServices.dart';
+
+import '../common/constants.dart';
 
 class AuthService {
   void signUpUser({
@@ -25,14 +20,15 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      print("Inside SignUp");
       var user = User(
-          name: '',
-          id: '',
-          email: email,
-          password: password,
-          token: '',
-          skills: []);
+        name: '',
+        id: '',
+        email: email,
+        password: password,
+        token: '',
+        skills: [],
+      );
+
       http.Response res = await http.post(
         Uri.parse('$uri/signup'),
         body: user.toJson(),
@@ -40,25 +36,24 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print("RESPONSE: ${res.body}");
+
       httpErrorHandler(
-          res: res,
-          context: context,
-          onSuccess: () {
-            OTPService otpService = OTPService();
-            print("USER ID: ${jsonDecode(res.body)['_id']}");
-            otpService.getOTP(email);
-            showSnackBar(
-                context: context, text: "Account Created Successfully!");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      OTPScreen(email: jsonDecode(res.body)['email']),
-                ));
-          });
+        res: res,
+        context: context,
+        onSuccess: () {
+          OTPService otpService = OTPService();
+          otpService.getOTP(email, context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  OTPScreen(email: jsonDecode(res.body)['email']),
+            ),
+          );
+        },
+      );
     } catch (e) {
-      print(e);
+      print("Error in signUpUser: $e");
     }
   }
 
@@ -68,7 +63,6 @@ class AuthService {
     required BuildContext context,
   }) async {
     try {
-      print(jsonEncode({"email": email, "password": password}));
       http.Response res = await http.post(
         Uri.parse("$uri/login"),
         body: jsonEncode({"email": email, "password": password}),
@@ -76,23 +70,21 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      httpErrorHandler(
-          res: res,
-          context: context,
-          onSuccess: () async {
-            SharedPreferences sharedPreferences =
-                await SharedPreferences.getInstance();
-            sharedPreferences.setString(
-                'x-auth-token', jsonDecode(res.body)['token']);
-            var token = sharedPreferences.getString('x-auth-token');
-            print("Token: $token");
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SkillsSelectionPage()));
 
-            showSnackBar(context: context, text: "Login Successfull");
-          });
+      httpErrorHandler(
+        res: res,
+        context: context,
+        onSuccess: () async {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          sharedPreferences.setString(
+              'x-auth-token', jsonDecode(res.body)['token']);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SkillsSelectionPage()));
+        },
+      );
     } catch (err) {
-      print(err);
+      print("Error in logInUser: $err");
     }
   }
 
@@ -102,39 +94,36 @@ class AuthService {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      String? token = sharedPreferences.getString("x-auth-token");
-      if (token == null || token.isEmpty) {
-        sharedPreferences.setString('x-auth-token', "");
-      }
-      print("before tokenValid");
-      http.Response res = await http.post(Uri.parse("$uri/tokenIsValid"),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            "x-auth-token": token!
-          });
-      print(res.body);
-      print("after tokenValid");
+      String? token = sharedPreferences.getString("x-auth-token") ?? "";
 
-      var response = jsonDecode(res.body);
+      http.Response res = await http.post(
+        Uri.parse("$uri/tokenIsValid"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          "x-auth-token": token,
+        },
+      );
 
-      if (response == true) {
-        http.Response userData = await http.get(Uri.parse("$uri/"),
+      httpErrorHandler(
+        res: res,
+        context: context,
+        onSuccess: () async {
+          http.Response userData = await http.get(
+            Uri.parse("$uri/"),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
-              "x-auth-token": token
-            });
-        print("UserData: ${userData.body.toString()}");
-        var userProvider = Provider.of<UserProvider>(context, listen: false);
-        print("before setuser");
-        if (userData != null && userData.body != null) {
-          print("setUser Called");
-          userProvider.setUser(userData.body);
-          print("after setUser called");
-        }
-        print("Email: ${userProvider.user.email}");
-      }
+              "x-auth-token": token,
+            },
+          );
+
+          var userProvider = Provider.of<UserProvider>(context, listen: false);
+          if (userData.body.isNotEmpty) {
+            userProvider.setUser(userData.body);
+          }
+        },
+      );
     } catch (err) {
-      print("Error Lol: $err");
+      print("Error in getUserData: $err");
     }
   }
 }

@@ -65,16 +65,23 @@ class LoginScreen extends StatelessWidget {
               CustomTextField(
                   "Enter Email", emailController, Icons.email_outlined),
               CustomTextField(
-                  "Password", passwordController, Icons.password_outlined),
+                  "Password", passwordController, Icons.password_outlined,
+                  isPassword: true),
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: textColor2,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 5,
+                    horizontal: 25,
+                  ),
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: textColor2,
+                    ),
                   ),
                 ),
               ),
@@ -87,17 +94,17 @@ class LoginScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                      width: size.width,
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      decoration: BoxDecoration(
-                        color: buttonColor,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          logInUser();
-                        },
+                    GestureDetector(
+                      onTap: () {
+                        logInUser();
+                      },
+                      child: Container(
+                        width: size.width,
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          color: buttonColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: Center(
                           child: Text(
                             "Sign In",
@@ -148,7 +155,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   Container CustomTextField(
-      String hintText, TextEditingController textController, IconData icon) {
+      String hintText, TextEditingController textController, IconData icon,
+      {bool isPassword = false}) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 25,
@@ -156,6 +164,8 @@ class LoginScreen extends StatelessWidget {
       ),
       child: TextField(
         controller: textController,
+        obscureText:
+            isPassword, // This will hide the text if isPassword is true
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(
             horizontal: 20,
@@ -179,47 +189,47 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-  //   return Scaffold(
-  //     body: Center(
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           TextField(
-  //             controller: emailController,
-  //             decoration: InputDecoration(
-  //               labelText: 'Enter Email',
-  //               border: OutlineInputBorder(),
-  //               constraints: BoxConstraints(
-  //                 maxHeight: 300,
-  //                 maxWidth: 400,
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(height: 20),
-  //           TextField(
-  //             controller: passwordController,
-  //             decoration: InputDecoration(
-  //               labelText: 'Enter Password',
-  //               border: OutlineInputBorder(),
-  //               constraints: BoxConstraints(
-  //                 maxHeight: 300,
-  //                 maxWidth: 400,
-  //               ),
-  //             ),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               print(emailController.text);
-  //               print(passwordController.text);
-  //               logInUser();
-  //             },
-  //             child: Text("Login"),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }
+
+//   return Scaffold(
+//     body: Center(
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           TextField(
+//             controller: emailController,
+//             decoration: InputDecoration(
+//               labelText: 'Enter Email',
+//               border: OutlineInputBorder(),
+//               constraints: BoxConstraints(
+//                 maxHeight: 300,
+//                 maxWidth: 400,
+//               ),
+//             ),
+//           ),
+//           SizedBox(height: 20),
+//           TextField(
+//             controller: passwordController,
+//             decoration: InputDecoration(
+//               labelText: 'Enter Password',
+//               border: OutlineInputBorder(),
+//               constraints: BoxConstraints(
+//                 maxHeight: 300,
+//                 maxWidth: 400,
+//               ),
+//             ),
+//           ),
+//           ElevatedButton(
+//             onPressed: () {
+//               print(emailController.text);
+//               print(passwordController.text);
+//               logInUser();
+//             },
+//             child: Text("Login"),
+//           )
+//         ],
+//       ),
+//     ),
+//   );
+// }

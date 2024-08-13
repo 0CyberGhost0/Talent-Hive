@@ -72,7 +72,8 @@ class SignUpPage extends StatelessWidget {
               CustomTextField(
                   "Enter Email", emailController, Icons.email_outlined),
               CustomTextField(
-                  "Password", passwordController, Icons.password_outlined),
+                  "Password", passwordController, Icons.password_outlined,
+                  isPassword: true),
               SizedBox(height: 10),
               SizedBox(
                 height: size.height * 0.04,
@@ -112,7 +113,7 @@ class SignUpPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginScreen()));
+                                builder: (context) => const LoginScreen()));
                       },
                       child: Text.rich(TextSpan(
                         text: "Already a member?",
@@ -142,7 +143,8 @@ class SignUpPage extends StatelessWidget {
   }
 
   Container CustomTextField(
-      String hintText, TextEditingController textController, IconData icon) {
+      String hintText, TextEditingController textController, IconData icon,
+      {bool isPassword = false}) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 25,
@@ -150,6 +152,8 @@ class SignUpPage extends StatelessWidget {
       ),
       child: TextField(
         controller: textController,
+        obscureText:
+            isPassword, // This will hide the text if isPassword is true
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(
             horizontal: 20,
@@ -161,7 +165,7 @@ class SignUpPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           hintText: hintText,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             color: Colors.black38,
             fontSize: 19,
           ),

@@ -44,10 +44,10 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: Provider.of<UserProvider>(context).user.token.isEmpty
-      //     ? SignUpPage()
-      //     : LoginScreen(),
-      home: SearchScreen(),
+      home: Provider.of<UserProvider>(context).user.token.isEmpty
+          ? SplashScreen()
+          : HomeScreen(),
+      // home: SplashScreen(),
     );
   }
 }

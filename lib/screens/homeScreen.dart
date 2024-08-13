@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:talent_hive/common/colors.dart';
 import 'package:talent_hive/provider/user_provider.dart';
+import 'package:talent_hive/screens/categoryScreen.dart';
 import 'package:talent_hive/screens/postJobScreen.dart';
 import 'package:talent_hive/screens/searchScreen.dart';
 import 'package:talent_hive/services/authServices.dart';
@@ -34,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     JobServices jobServices = JobServices();
 
-    List<Job> jobs = await jobServices.getFeaturedJob(user.id);
+    List<Job> jobs = await jobServices.getFeaturedJob(user.id, context);
     setState(() {
       featuredJobs = jobs;
     });
@@ -45,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Fetch recent jobs based on userId or any other criteria
     List<Job> jobs =
-        await jobServices.getRecentJob(); // Assume this method exists
+        await jobServices.getRecentJob(context); // Assume this method exists
     setState(() {
       recentJobs = jobs;
     });
@@ -212,8 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         backgroundColor:
-            Colors.black, // Set the color for the floating action button
-        child: Icon(Icons.add),
+            homeGreenColor, // Set the color for the floating action button
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -222,8 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCategoryChip(String label) {
     return GestureDetector(
       onTap: () {
-        JobServices jobServices = JobServices();
-        jobServices.getCategoryJob(label); // Fetch category jobs on tap
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CategoryScreen(
+                    categoryType: label))); // Fetch category jobs on tap
       },
       child: Container(
         margin: EdgeInsets.only(right: 10),

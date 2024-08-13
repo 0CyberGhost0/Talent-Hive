@@ -25,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen> {
     String query = _searchController.text;
     if (query.isNotEmpty) {
       JobServices jobServices = JobServices();
-      List<Job> results = await jobServices.searchJob(query);
+      List<Job> results = await jobServices.searchJob(query, context);
       setState(() {
         searchResults = results;
       });
@@ -50,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.arrow_back),
+                    icon: Icon(Icons.arrow_back_ios_new),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -74,12 +74,26 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               ),
               SizedBox(height: 20),
-              Text(
-                "Search Results",
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              // Row with "Search Results" and result count
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Search Results",
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (searchResults.isNotEmpty)
+                    Text(
+                      "${searchResults.length} Results",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                ],
               ),
               SizedBox(height: 20),
               // Display "Search Job" when query is empty

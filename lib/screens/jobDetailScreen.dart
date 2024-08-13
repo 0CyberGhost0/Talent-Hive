@@ -1,121 +1,120 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:talent_hive/provider/user_provider.dart';
 import 'package:talent_hive/services/jobServices.dart';
-
 import '../models/jobModel.dart';
 
 class JobDetailScreen extends StatefulWidget {
-  String jobId;
-  JobDetailScreen({super.key, required this.jobId});
+  final String jobId;
+  JobDetailScreen({Key? key, required this.jobId}) : super(key: key);
+
   @override
   State<JobDetailScreen> createState() => _JobDetailScreenState();
 }
 
 class _JobDetailScreenState extends State<JobDetailScreen> {
+  bool isApplied = false; // State variable to track if the job is applied
+
   @override
   void initState() {
-    getJobData();
     super.initState();
+    checkApplicationStatus(); // Check if the user has already applied
+    getJobData();
   }
 
   Job job = Job(
-      location: '',
-      jobId: '',
-      title: '',
-      org: '',
-      description: '',
-      imageUrl: '',
-      minSalary: 0,
-      maxSalary: 0,
-      type: '',
-      skill: [],
-      applyCount: 0);
+    location: '',
+    jobId: '',
+    title: '',
+    org: '',
+    description: '',
+    imageUrl: '',
+    minSalary: 0,
+    maxSalary: 0,
+    type: '',
+    skill: [],
+    applyCount: 0,
+  );
 
   Future<void> getJobData() async {
     JobServices jobService = JobServices();
-    print("JOB ID : ${widget.jobId}");
-    Job fetchedJob = await jobService.getJobDetail(widget.jobId);
+    Job fetchedJob = await jobService.getJobDetail(widget.jobId, context);
     setState(() {
       job = fetchedJob;
     });
-    print("INSIDE SCREEN: ${job}");
+  }
+
+  Future<void> checkApplicationStatus() async {
+    JobServices jobServices = JobServices();
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    bool applied = await jobServices.hasApplied(user.id, widget.jobId, context);
+    setState(() {
+      isApplied = applied;
+    });
+  }
+
+  Future<void> applyToJob() async {
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    JobServices jobServices = JobServices();
+    await jobServices.applyToJob(user.id, widget.jobId, context);
+    setState(() {
+      isApplied = true;
+      job.applyCount += 1; // Update the state to reflect the application
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Sample job data
-    // final job = Job(
-    //   title: 'Junior Front End Developer',
-    //   org: 'Apple Computer, Inc.',
-    //   description:
-    //       'We’re looking for a junior front-end developer who works on building ith the application’s r who works on building the user . They showcase their skills with the application’s visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works  visual elements, including graphics, typography, and layouts. They also ensure smooth interaction between the app and users.We’re looking for a junior front-end developer who works on building the user interface of a mobile application or website. They showcase their skills with the ',
-    //   imageUrl:
-    //       'https://img.freepik.com/premium-vector/logo-google_798572-207.jpg',
-    //   minSalary: 50,
-    //   maxSalary: 100,
-    //   type: 'Full Time',
-    //   skill: [
-    //     "Remote",
-    //     "Fulltime",
-    //     "Senior",
-    //     "Front End",
-    //   ],
-    //   applyCount: 1478,
-    // );
+    // Generate a random number between 1 and 8 for the logo image
+    final int randomNum = Random().nextInt(17) + 1;
 
     return Scaffold(
       backgroundColor: Color(0xff305a53), // Background color matching the image
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      Expanded(
-                        child: Text(
-                          job.org,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header Section
+              Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back_ios_new,
+                              color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        Expanded(
+                          child: Text(
+                            job.org,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      Icon(Icons.more_horiz, color: Colors.white),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors
-                        .grey[200], // Optional: Background color for fallback
-                    backgroundImage: NetworkImage(job.imageUrl),
-                    onBackgroundImageError: (_, __) {
-                      // Fallback when image fails to load
-                    },
-                    child: job.imageUrl == null
-                        ? Icon(Icons.error,
-                            color: Colors.red) // Fallback icon when no image
-                        : null,
-                  ),
-                  SizedBox(height: 10),
-                ],
+                        Icon(Icons.more_horiz, color: Colors.white),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage:
+                          AssetImage('assets/images/logo$randomNum.jpg'),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                ),
               ),
-            ),
-            // Body Section
-            Expanded(
-              child: Container(
+              // Body Section
+              Container(
                 padding: EdgeInsets.all(34),
                 decoration: BoxDecoration(
                   color: Color(0xfff3f3f3),
@@ -149,7 +148,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         Icon(Icons.location_on,
                             color: Colors.black54, size: 16),
                         Text(
-                          'Mountain View, CA',
+                          job.location,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: Colors.black,
@@ -165,9 +164,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.all(8),
-                            margin: EdgeInsets.only(
-                                right:
-                                    2), // Margin to separate from the next container
+                            margin: EdgeInsets.only(right: 2),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15),
@@ -181,9 +178,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.all(8),
-                            margin: EdgeInsets.only(
-                                left:
-                                    10), // Margin to separate from the previous container
+                            margin: EdgeInsets.only(left: 10),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15),
@@ -222,11 +217,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           .map((skill) => _buildSkillChip(skill))
                           .toList(),
                     ),
-                    Spacer(),
+                    SizedBox(height: 20),
                     // Footer Section
                     Row(
                       children: [
-                        // Add Image Before Applicant Text
                         Image.asset(
                           'assets/images/apply.png',
                           width: 30,
@@ -256,11 +250,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         ),
                         Spacer(),
                         ElevatedButton(
-                          onPressed: () {
-                            // Add apply job functionality here
-                          },
+                          onPressed: isApplied ? null : applyToJob,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF00695C),
+                            backgroundColor: isApplied
+                                ? Colors.blue
+                                : Color(
+                                    0xFF00695C), // Change color when applied
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -268,7 +263,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                 horizontal: 32, vertical: 16),
                           ),
                           child: Text(
-                            "Apply Job",
+                            isApplied
+                                ? "Applied"
+                                : "Apply Job", // Change text when applied
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               color: Colors.white,
@@ -280,8 +277,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -333,17 +330,23 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
   // Skill Chip Widget
   Widget _buildSkillChip(String label) {
-    return Chip(
-      label: Text(
-        label,
-        style: GoogleFonts.poppins(
-          color: Colors.grey,
-          fontWeight: FontWeight.w600,
-        ),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: 5,
       ),
-      backgroundColor: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      side: BorderSide.none, // No border for the skill chips
+      child: Chip(
+        label: Text(
+          label,
+          style: GoogleFonts.poppins(
+            color: Colors.grey,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        side: BorderSide.none, // No border for the skill chips
+      ),
     );
   }
 }

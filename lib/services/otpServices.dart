@@ -1,16 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:talent_hive/common/httpErrorHandler.dart';
-import 'package:talent_hive/screens/homeScreen.dart';
 import 'package:talent_hive/screens/login_screen.dart';
-import 'package:talent_hive/screens/skillSelectionScreen.dart';
-
 import '../common/constants.dart';
 
 class OTPService {
-  void getOTP(String email) async {
+  void getOTP(String email, BuildContext context) async {
     try {
       print("Inside getOTP()");
       http.Response res = await http.post(
@@ -20,9 +16,17 @@ class OTPService {
         },
         body: jsonEncode({"email": email}),
       );
+
+      httpErrorHandler(
+        res: res,
+        context: context,
+        onSuccess: () {
+          // showSnackBar(context: context, text: "OTP Sent Successfully!");
+        },
+      );
       print("after getOTP()");
     } catch (err) {
-      print("GET OTP: $err");
+      print("GET OTP Error: $err");
     }
   }
 
@@ -39,18 +43,22 @@ class OTPService {
           "email": email,
         }),
       );
+
       httpErrorHandler(
-          res: res,
-          context: context,
-          onSuccess: () {
-            showSnackBar(context: context, text: "User Verified Successfully");
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
-          });
+        res: res,
+        context: context,
+        onSuccess: () {
+          // showSnackBar(context: context, text: "User Verified Successfully!");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        },
+      );
       print("VERIFY BODY: ${res.body}");
       print("AFTER Verify OTP");
     } catch (err) {
-      print(err);
+      print("VERIFY OTP Error: $err");
     }
   }
 }
